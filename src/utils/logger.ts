@@ -1,6 +1,7 @@
+/* eslint-disable no-console */
 import { LogInfo, LogType } from '../constant';
 
-const logInfos: LogInfo[] = [];
+export const logInfos: LogInfo[] = [];
 
 const LogColorMap = {
   [LogType.LOG]: '\x1b[37m',
