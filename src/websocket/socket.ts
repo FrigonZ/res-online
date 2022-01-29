@@ -3,6 +3,7 @@ import {
   LogType,
   OrderAction,
   WebSocketRequest,
+  WebSocketResponse,
   WebSocketUniq,
 } from '../constant';
 import { doLog } from '../utils/logger';
@@ -43,7 +44,6 @@ export class SocketItem {
     socketId += 1;
     socketList.push(this);
     this.initListener();
-    console.log(socket.terminate);
     this.heartBeat = setTimeout(this.heartBeatReaction, HEART_BEAT_STEP);
   }
 
@@ -55,12 +55,14 @@ export class SocketItem {
 
   /** 当接收到信息时，重置心跳计时器 */
   private resetHeartBeat = () => {
+    if (this.heartBeat) clearTimeout(this.heartBeat);
     this.heartBeat = setTimeout(this.heartBeatReaction, HEART_BEAT_STEP);
   };
 
   /** 心跳停跳事件，无响应等待1分钟后断开连接 */
   private heartBeatReaction = () => {
     doLog(`${this.key} maybe dead`);
+    this.handleSend();
     this.heartBeat = setTimeout(() => this.socket.terminate(), HEART_BEAT_STEP);
   };
 
@@ -83,10 +85,16 @@ export class SocketItem {
 
   /** 发送所有待发送数据 */
   private handleSend = () => {
-    if (!this.waitData.length) return;
+    if (!this.waitData.length) {
+      this.sendHeatBeat();
+      return;
+    }
+    const rspData = {
+      data: this.waitData,
+    };
     const ids = this.waitData.map((data) => data.id).join(',');
     doLog(JSON.stringify({ key: this.key, ids }));
-    this.socket.send(JSON.stringify(this.waitData));
+    this.socket.send(JSON.stringify(rspData));
   };
 
   /** 关闭连接处理 */
@@ -183,5 +191,18 @@ export class SocketItem {
       id: this.getRspId(),
     });
     this.socket.terminate();
+  };
+
+  private sendHeatBeat = () => {
+    const heartBeatData: WebSocketResponse = {
+      data: [
+        {
+          action: OrderAction.HEART_BEAT,
+          options: {},
+          id: '',
+        },
+      ],
+    };
+    this.socket.send(JSON.stringify(heartBeatData));
   };
 }
