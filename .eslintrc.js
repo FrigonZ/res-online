@@ -1,17 +1,13 @@
 module.exports = {
   env: {
-    browser: true,
+    node: true,
     es2021: true,
+    'jest/globals': true,
   },
   globals: {
     NodeJS: true,
   },
-  extends: [
-    'plugin:react/recommended',
-    'airbnb',
-    'prettier',
-    'plugin:prettier/recommended',
-  ],
+  extends: ['airbnb', 'prettier', 'plugin:prettier/recommended'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
@@ -20,7 +16,7 @@ module.exports = {
     ecmaVersion: 13,
     sourceType: 'module',
   },
-  plugins: ['react', '@typescript-eslint', 'prettier', 'import'],
+  plugins: ['@typescript-eslint', 'prettier', 'import', 'jest'],
   rules: {
     'import/no-unresolved': 'error',
     'import/extensions': 'off',
@@ -43,6 +39,9 @@ module.exports = {
         // 从 <roo/>@types 读取类型定义
         alwaysTryTypes: true,
       },
+    },
+    react: {
+      version: 'latest',
     },
   },
 };
