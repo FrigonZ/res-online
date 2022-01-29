@@ -2,8 +2,14 @@ import { LogInfo, LogType } from '../constant';
 
 const logInfos: LogInfo[] = [];
 
+const LogColorMap = {
+  [LogType.LOG]: '\x1b[37m',
+  [LogType.WARN]: '\x1b[33m',
+  [LogType.ERROR]: '\x1b[31m',
+};
+
 export const doLog = (msg: string, type = LogType.LOG) => {
-  console.log(`[ ${type} ]: ${msg}`);
+  console.log(LogColorMap[type], `[${type}]: ${msg}`);
   logInfos.push({
     type,
     msg,
