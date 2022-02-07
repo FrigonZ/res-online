@@ -7,6 +7,7 @@ import {
   WebSocketUniq,
 } from '../constant';
 import { doLog } from '../utils/logger';
+import { generateWebsocketUniq } from './helper';
 
 /** 存储所有socket连接 */
 export const socketList: SocketItem[] = [];
@@ -112,7 +113,7 @@ export class SocketItem {
    * @param immediately 是否立即发送，默认为false
    */
   public addWaitData = (data: WebSocketUniq, immediately = false) => {
-    this.waitData.push(data);
+    this.waitData.push({ ...data, id: this.getRspId() });
     doLog(JSON.stringify({ key: this.key, data }));
     if (immediately) this.handleSend();
   };
@@ -150,12 +151,14 @@ export class SocketItem {
     const { time } = options;
     // get datas with time
     const data = time;
-    this.addWaitData({
-      id: this.getRspId(),
-      action: OrderAction.CONFIRM,
-      options: { oid: id },
-      data,
-    });
+    const rsp = generateWebsocketUniq(
+      OrderAction.CONFIRM,
+      {
+        oid: id,
+      },
+      data
+    );
+    this.addWaitData(rsp);
   };
 
   /** 处理set请求 */
@@ -164,12 +167,14 @@ export class SocketItem {
     const { wsid, status } = options;
     // get datas with wsid status
     const data = { wsid, status };
-    this.addWaitData({
-      id: this.getRspId(),
-      action: OrderAction.CONFIRM,
-      options: { oid: id },
-      data,
-    });
+    const rsp = generateWebsocketUniq(
+      OrderAction.CONFIRM,
+      {
+        oid: id,
+      },
+      data
+    );
+    this.addWaitData(rsp);
   };
 
   /** 处理确认请求 */
@@ -183,13 +188,10 @@ export class SocketItem {
   /** 处理结束请求 */
   private handleFinish = (order: WebSocketUniq) => {
     const { id } = order;
-    this.addWaitData({
-      action: OrderAction.CONFIRM,
-      options: {
-        oid: id,
-      },
-      id: this.getRspId(),
+    const data = generateWebsocketUniq(OrderAction.CONFIRM, {
+      oid: id,
     });
+    this.addWaitData(data);
     this.socket.terminate();
   };
 
@@ -206,3 +208,9 @@ export class SocketItem {
     this.socket.send(JSON.stringify(heartBeatData));
   };
 }
+
+export const doBroadcast = (data: WebSocketUniq) => {
+  socketList.some((socket) => {
+    return socket.addWaitData(data, true);
+  });
+};
