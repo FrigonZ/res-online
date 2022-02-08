@@ -73,7 +73,7 @@ export class SocketItem {
       const parsedData: WebSocketRequest = JSON.parse(data);
       const { data: orders = [] } = parsedData;
       this.resetHeartBeat();
-      orders.some(async (order) => {
+      orders.forEach(async (order) => {
         await this.handleOrderActions(order);
       });
       this.handleSend();
@@ -210,7 +210,7 @@ export class SocketItem {
 }
 
 export const doBroadcast = (data: WebSocketUniq) => {
-  socketList.some((socket) => {
-    return socket.addWaitData(data, true);
+  socketList.forEach((socket) => {
+    socket.addWaitData(data, true);
   });
 };
