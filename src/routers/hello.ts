@@ -1,16 +1,14 @@
 import Router = require('koa-router');
-import { OrderAction } from '../constant';
-import { hello } from '../controller/hello';
-import { doBroadcast, generateWebsocketUniq } from '../websocket';
+import { hello, set, test } from '../controller/hello';
 
 const router = new Router({ prefix: '/hello' });
 
 router.get('/', hello);
 
-router.get('/set', async (ctx) => {
-  const castData = generateWebsocketUniq(OrderAction.SET, {});
-  doBroadcast(castData);
-  ctx.body = 'set successed';
-});
+router.get('/test', test);
+
+router.get('/test/:tid', test);
+
+router.get('/broadcast', set);
 
 export default router;
