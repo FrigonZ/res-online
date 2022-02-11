@@ -1,6 +1,8 @@
 // app入口文件
 import Koa = require('koa');
 import http = require('http');
+import 'reflect-metadata';
+import { createConnection } from 'typeorm';
 import initialRoute from './routers';
 import initialMiddleware from './middleware';
 import { doLog } from './utils/logger';
@@ -12,6 +14,7 @@ const PORT = 8080;
 const app = new Koa();
 const server = http.createServer(app.callback());
 
+createConnection();
 initWsServer(server);
 
 initialMiddleware(app);
