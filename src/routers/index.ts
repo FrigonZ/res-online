@@ -2,8 +2,9 @@ import Router = require('koa-router');
 import { App } from '../constant';
 import fs from './fs';
 import hello from './hello';
+import login from './login';
 
-const routers: Router[] = [fs, hello];
+const routers: Router[] = [fs, hello, login];
 
 const baseRouter = new Router({ prefix: '/api' });
 

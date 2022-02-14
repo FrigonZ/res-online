@@ -1,9 +1,15 @@
 import { Ctx, OrderAction } from '../constant';
 import { Test } from '../entity/test';
+import { ResponseWrap } from '../utils/response';
 import { doBroadcast, generateWebsocketUniq } from '../websocket';
 
+/** 用来调试服务联通情况 */
 export const hello = (ctx: Ctx) => {
-  ctx.body = 'hello';
+  const { user } = ctx.params;
+  ResponseWrap.success(ctx, {
+    hello: 'hello',
+    user,
+  });
 };
 
 export const test = async (ctx: Ctx) => {
