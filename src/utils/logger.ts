@@ -5,7 +5,7 @@ export const logInfos: LogInfo[] = [];
 
 const LogColorMap = {
   [LogType.LOG]: '\x1b[37m',
-  [LogType.WARN]: '\x1b[33m',
+  [LogType.INFO]: '\x1b[33m',
   [LogType.ERROR]: '\x1b[31m',
 };
 
@@ -16,4 +16,11 @@ export const doLog = (msg: string, type = LogType.LOG) => {
     msg,
     time: new Date().toLocaleTimeString(),
   });
+};
+
+export const logError = (key: string, data?: any) => {
+  doLog(key, LogType.ERROR);
+  if (data) {
+    doLog(JSON.stringify(data), LogType.INFO);
+  }
 };
