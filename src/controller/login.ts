@@ -1,12 +1,14 @@
 import axios from 'axios';
-import { Ctx, LogType, Next } from '../constant';
+import { Ctx, Next } from '../constant';
 import { User } from '../entity/user';
 import { sign, verify } from '../utils/jwt';
 import { joinParams } from '../utils/request';
 import { URI } from '../constant/uri';
 import { appid, secret } from '../constant/config';
 import { ResponseWrap } from '../utils/response';
-import { doLog } from '../utils/logger';
+import { logError } from '../utils/logger';
+
+const KEY = 'controller.login';
 
 /** 用户登录 */
 export const login = async (ctx: Ctx) => {
@@ -37,6 +39,7 @@ export const login = async (ctx: Ctx) => {
     if (!user) {
       user = new User();
       user.openid = openid;
+      user.admin = false;
       user = await user.save();
     }
 
@@ -49,7 +52,7 @@ export const login = async (ctx: Ctx) => {
       token,
     });
   } catch (error) {
-    doLog(JSON.stringify(error), LogType.ERROR);
+    logError(`${KEY}.login`, ctx.request.body);
     ResponseWrap.error(ctx);
   }
 };
@@ -70,7 +73,7 @@ export const auth = async (ctx: Ctx, next: Next) => {
       return;
     }
 
-    const hasUser = await User.find(user);
+    const hasUser = await User.findOne(user);
     if (!hasUser) {
       ResponseWrap.authFail(ctx);
       return;
@@ -79,7 +82,37 @@ export const auth = async (ctx: Ctx, next: Next) => {
     ctx.params.user = user;
     next();
   } catch (error) {
-    doLog(JSON.stringify(error), LogType.ERROR);
+    logError(`${KEY}.auth`, ctx.request.header);
+    ResponseWrap.error(ctx);
+  }
+};
+
+/** 用户访问鉴权，更像是一个中间件 */
+export const admin = async (ctx: Ctx, next: Next) => {
+  try {
+    const { header } = ctx.request;
+    const { authorization = '' } = header;
+    if (!authorization) {
+      ResponseWrap.authFail(ctx);
+      return;
+    }
+
+    const { user } = verify(authorization);
+    if (!user) {
+      ResponseWrap.authFail(ctx);
+      return;
+    }
+
+    const authUser: User = await User.findOne(user);
+    if (!authUser || !authUser.admin) {
+      ResponseWrap.authFail(ctx);
+      return;
+    }
+
+    ctx.params.user = user;
+    next();
+  } catch (error) {
+    logError(`${KEY}.admin`, ctx.request.header);
     ResponseWrap.error(ctx);
   }
 };

@@ -3,8 +3,9 @@ import { App } from '../constant';
 import fs from './fs';
 import hello from './hello';
 import login from './login';
+import dish from './dish';
 
-const routers: Router[] = [fs, hello, login];
+const routers: Router[] = [fs, hello, login, dish];
 
 const baseRouter = new Router({ prefix: '/api' });
 

@@ -14,7 +14,7 @@ export type Next = Koa.Next;
 /** 日志类型 */
 export const enum LogType {
   LOG = 'LOG',
-  WARN = 'WARN',
+  INFO = 'INFO',
   ERROR = 'ERROR',
 }
 
@@ -33,4 +33,26 @@ export const enum OrderStatus {
   FINISHED,
   /** 取消 */
   CANCELED,
+}
+
+/** 餐品状态 */
+export const enum DishStatus {
+  /** 正常 */
+  NORMAL,
+  /** 售罄 */
+  SOLD_OUT,
+  /** 下架 */
+  CLOSED,
+}
+
+/** 餐品自定义 */
+export interface DishOption {
+  /** 分组名 */
+  group?: string;
+  /** 选项名 */
+  names: string[];
+  /** 选项价格 */
+  prices: number[];
+  /** 是否多选 */
+  isMulti: boolean;
 }

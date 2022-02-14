@@ -7,4 +7,7 @@ export class User extends BaseEntity {
 
   @Column()
   openid: string;
+
+  @Column()
+  admin: boolean;
 }
