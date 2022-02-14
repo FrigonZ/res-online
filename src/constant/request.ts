@@ -1,4 +1,4 @@
-import { OrderStatus } from './entity';
+import { OrderStatus } from './types';
 
 /** 订单接口行为 */
 export const enum OrderAction {

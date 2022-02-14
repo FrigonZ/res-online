@@ -1,3 +1,4 @@
 export * from './types';
 export * from './request';
-export * from './entity';
+export * from './config';
+export * from './uri';
