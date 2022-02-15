@@ -27,7 +27,7 @@ export class Dish extends BaseEntity {
   @Column()
   name: string;
 
-  @Column()
+  @Column({type: 'double'})
   price: number;
 
   @Column()

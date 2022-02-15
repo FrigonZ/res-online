@@ -13,7 +13,7 @@ export const getAll = async (ctx: Ctx) => {
       dishList,
     });
   } catch (error) {
-    logError(`${KEY}.getAll`);
+    logError(`${KEY}.getAll`, error);
     ResponseWrap.error(ctx);
   }
 };
@@ -36,7 +36,7 @@ export const update = async (ctx: Ctx) => {
 
     ResponseWrap.success(ctx, {});
   } catch (error) {
-    logError(`${KEY}.update`, ctx.request.body);
+    logError(`${KEY}.update`, error, ctx.request.body);
     ResponseWrap.error(ctx);
   }
 };
@@ -60,7 +60,7 @@ export const create = async (ctx: Ctx) => {
 
     ResponseWrap.success(ctx, {});
   } catch (error) {
-    logError(`${KEY}.create`, ctx.request.body);
+    logError(`${KEY}.create`, error, ctx.request.body);
     ResponseWrap.error(ctx);
   }
 };

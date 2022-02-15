@@ -5,7 +5,7 @@ import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import initialRoute from './routers';
 import initialMiddleware from './middleware';
-import { doLog } from './utils/logger';
+import { doLog, removeLogTimer, setLogTimer } from './utils/logger';
 import { initWsServer } from './websocket';
 
 // 服务监听端口
@@ -19,7 +19,10 @@ initWsServer(server);
 
 initialMiddleware(app);
 initialRoute(app);
+setLogTimer();
 
 server.listen(PORT, () => {
   doLog(`app is running on ${PORT}`);
 });
+
+process.on('exit', removeLogTimer);
