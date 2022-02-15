@@ -23,6 +23,7 @@ export interface LogInfo {
   type: LogType;
   time: string;
   msg: string;
+  key?: string;
 }
 
 /** 订单状态 */

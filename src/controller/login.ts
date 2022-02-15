@@ -52,7 +52,7 @@ export const login = async (ctx: Ctx) => {
       token,
     });
   } catch (error) {
-    logError(`${KEY}.login`, ctx.request.body);
+    logError(`${KEY}.login`, error, ctx.request.body);
     ResponseWrap.error(ctx);
   }
 };
@@ -82,7 +82,7 @@ export const auth = async (ctx: Ctx, next: Next) => {
     ctx.params.user = user;
     next();
   } catch (error) {
-    logError(`${KEY}.auth`, ctx.request.header);
+    logError(`${KEY}.auth`, error, ctx.request.header);
     ResponseWrap.error(ctx);
   }
 };
@@ -112,7 +112,7 @@ export const admin = async (ctx: Ctx, next: Next) => {
     ctx.params.user = user;
     next();
   } catch (error) {
-    logError(`${KEY}.admin`, ctx.request.header);
+    logError(`${KEY}.admin`, error, ctx.request.header);
     ResponseWrap.error(ctx);
   }
 };
