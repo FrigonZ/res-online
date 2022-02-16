@@ -36,14 +36,19 @@ export class Dish extends BaseEntity {
   @Column()
   desc: string;
 
-  @Column()
-  options: string;
+  @Column({
+    type: 'simple-json'
+  })
+  options: DishOption[];
 
   @Column()
   isNecessary: boolean;
 
   @Column()
   status: DishStatus;
+
+  @Column()
+  time: Date;
 
 	/** 生成餐品信息，避免override构造器影响orm */
   public static generateDish(props: DishProps): Dish {
@@ -61,14 +66,18 @@ export class Dish extends BaseEntity {
     dish.price = price;
     dish.pic = pic;
     dish.desc = desc;
-    dish.options = JSON.stringify(options);
+    dish.options = options;
     dish.isNecessary = isNecessary;
     dish.status = status;
+    dish.time = new Date();
     return dish;
   }
 
-	/** 获取餐品自定义信息 */
-  public getOptions = (): DishOption[] => {
-    return JSON.parse(this.options);
-  };
+  /** 获取修改餐品信息数据 */
+  public static getPortail = (props: Partial<DishProps>) => {
+    return {
+      ...props,
+      time: new Date(),
+    };
+  }
 }

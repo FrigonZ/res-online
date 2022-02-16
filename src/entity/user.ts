@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
+/* eslint-disable import/no-cycle */
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  OneToMany,
+} from 'typeorm';
+import { Order } from './order';
 
 @Entity()
 export class User extends BaseEntity {
@@ -10,4 +18,7 @@ export class User extends BaseEntity {
 
   @Column()
   admin: boolean;
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
 }

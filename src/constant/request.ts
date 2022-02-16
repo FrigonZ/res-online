@@ -1,13 +1,4 @@
-import { OrderStatus } from './types';
-
-/** 订单接口行为 */
-export const enum OrderAction {
-  GET,
-  SET,
-  CONFIRM,
-  HEART_BEAT,
-  FINISH,
-}
+import { OrderAction, OrderStatus } from './types';
 
 /** 订单数据交互参数 */
 export interface OrderOption {

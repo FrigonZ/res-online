@@ -27,7 +27,10 @@ export const update = async (ctx: Ctx) => {
     }
 
     const { did } = dish;
-    const result: UpdateResult = await Dish.update(did, dish);
+    const result: UpdateResult = await Dish.update(
+      did,
+      Dish.getPortail(dish) as any
+    );
 
     if (result.affected !== 1) {
       ResponseWrap.fail(ctx, '修改失败');
