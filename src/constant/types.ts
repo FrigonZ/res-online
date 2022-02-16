@@ -11,19 +11,40 @@ export type Ctx = Koa.ParameterizedContext<
 
 export type Next = Koa.Next;
 
-/** 日志类型 */
+/** 日志类型, INFO/ERROR会写入数据库 */
 export const enum LogType {
+  /** 普通类型 */
   LOG = 'LOG',
+  /** 信息类型 */
   INFO = 'INFO',
+  /** 错误类型 */
   ERROR = 'ERROR',
 }
 
 /** 日志结构 */
 export interface LogInfo {
+  /** 日志类型 */
   type: LogType;
+  /** 日志时间 */
   time: string;
+  /** 日志信息 */
   msg: string;
+  /** 日志key */
   key?: string;
+}
+
+/** 订单接口行为 */
+export const enum OrderAction {
+  /** 获取订单列表 */
+  GET,
+  /** 调整订单状态 */
+  SET,
+  /** 确认消息 */
+  CONFIRM,
+  /** 心跳消息 */
+  HEART_BEAT,
+  /** 终止连接 */
+  FINISH,
 }
 
 /** 订单状态 */
@@ -56,4 +77,12 @@ export interface DishOption {
   prices: number[];
   /** 是否多选 */
   isMulti: boolean;
+}
+
+/** 订单内容 */
+export interface OrderDish {
+  /** 餐品id */
+  did: number;
+  /** 餐品自定义 */
+  option: DishOption;
 }
