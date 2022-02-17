@@ -4,7 +4,7 @@ import { Entity, Column, BaseEntity, PrimaryColumn } from 'typeorm';
 @Entity()
 export class Admin extends BaseEntity {
   @PrimaryColumn()
-  aid: number;
+  aid: string;
 
   @Column()
   password: string;

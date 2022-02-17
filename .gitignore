@@ -4,3 +4,4 @@
 /coverage/
 ormconfig.json
 /src/constant/config.ts
+/.VSCodeCounter/
