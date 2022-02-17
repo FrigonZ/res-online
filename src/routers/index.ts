@@ -5,8 +5,9 @@ import hello from './hello';
 import login from './login';
 import dish from './dish';
 import log from './log';
+import admin from './admin';
 
-const routers: Router[] = [fs, hello, login, dish, log];
+const routers: Router[] = [fs, hello, login, dish, log, admin];
 
 const baseRouter = new Router({ prefix: '/api' });
 

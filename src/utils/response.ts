@@ -46,7 +46,7 @@ export class ResponseWrap {
   };
 
   /** 失败回复 */
-  public static fail = (ctx: Ctx, msg: string) => {
+  public static fail = (ctx: Ctx, msg: string = '') => {
     ctx.body = new ResponseWrap({
       code: ResCode.FAIL,
       msg,
