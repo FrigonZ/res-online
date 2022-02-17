@@ -39,7 +39,6 @@ export const login = async (ctx: Ctx) => {
     if (!user) {
       user = new User();
       user.openid = openid;
-      user.admin = false;
       user = await user.save();
     }
 
@@ -73,46 +72,26 @@ export const auth = async (ctx: Ctx, next: Next) => {
       return;
     }
 
-    const hasUser = await User.findOne(user);
-    if (!hasUser) {
+    const userEntity = await User.findOne(user);
+    if (!userEntity) {
       ResponseWrap.authFail(ctx);
       return;
     }
 
-    ctx.params.user = user;
+    if (ctx.request.body) {
+      ctx.request.body = {
+        ...ctx.request.body,
+        user: userEntity,
+      };
+    } else {
+      ctx.request.body = {
+        user: userEntity,
+      };
+    }
+
     next();
   } catch (error) {
     logError(`${KEY}.auth`, error, ctx.request.header);
-    ResponseWrap.error(ctx);
-  }
-};
-
-/** 用户访问鉴权，更像是一个中间件 */
-export const admin = async (ctx: Ctx, next: Next) => {
-  try {
-    const { header } = ctx.request;
-    const { authorization = '' } = header;
-    if (!authorization) {
-      ResponseWrap.authFail(ctx);
-      return;
-    }
-
-    const { user } = verify(authorization);
-    if (!user) {
-      ResponseWrap.authFail(ctx);
-      return;
-    }
-
-    const authUser: User = await User.findOne(user);
-    if (!authUser || !authUser.admin) {
-      ResponseWrap.authFail(ctx);
-      return;
-    }
-
-    ctx.params.user = user;
-    next();
-  } catch (error) {
-    logError(`${KEY}.admin`, error, ctx.request.header);
     ResponseWrap.error(ctx);
   }
 };

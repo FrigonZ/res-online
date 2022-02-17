@@ -16,9 +16,6 @@ export class User extends BaseEntity {
   @Column()
   openid: string;
 
-  @Column()
-  admin: boolean;
-
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
 }
