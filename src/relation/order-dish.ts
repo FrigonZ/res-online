@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import {
   Entity,
   BaseEntity,
@@ -10,12 +11,17 @@ import { DishOption } from '../constant';
 import { Dish } from '../entity/dish';
 import { Order } from '../entity/order';
 
+export interface ODProps {
+  dish: Dish;
+  option: DishOption;
+}
+
 @Entity()
 export class OrderDish extends BaseEntity {
   @PrimaryColumn()
   oid: number;
 
-  @ManyToOne(() => Order)
+  @ManyToOne(() => Order, (order) => order.dishes)
   @JoinColumn({ name: 'oid' })
   order: Order;
 
@@ -28,4 +34,12 @@ export class OrderDish extends BaseEntity {
 
   @Column({ type: 'simple-json' })
   option: DishOption;
+
+  public static generateOrderDish = (props: ODProps) => {
+    const { dish, option } = props;
+    const orderDish = new OrderDish();
+    orderDish.dish = dish;
+    orderDish.option = option;
+    return orderDish;
+  };
 }
