@@ -3,6 +3,6 @@ import { login } from '../controller/admin';
 
 const router = new Router({ prefix: '/nimda' });
 
-router.get('/admin', login);
+router.post('/admin', login);
 
 export default router;
