@@ -21,8 +21,13 @@ export const getAll = async (ctx: Ctx) => {
 
 export const getByUser = async (ctx: Ctx) => {
   try {
-    const { user } = ctx.request.body;
-    const { orders } = user as any as User;
+    const { user: userInfo } = ctx.request.body;
+    const user = await User.findOne(userInfo);
+    if (!user) {
+      ResponseWrap.fail(ctx, '无效用户');
+    }
+
+    const { orders } = user as User;
     ResponseWrap.success(ctx, { orders });
   } catch (error) {
     ResponseWrap.error(ctx);
@@ -45,7 +50,12 @@ export const getById = async (ctx: Ctx) => {
 
 export const create = async (ctx: Ctx) => {
   try {
-    const { order, dishes, user } = ctx.request.body || {};
+    const { order, dishes, user: userInfo } = ctx.request.body || {};
+    const user = await User.findOne(userInfo);
+    if (!user) {
+      ResponseWrap.fail(ctx, '无效用户');
+    }
+
     if (!order) {
       ResponseWrap.fail(ctx, '缺少order');
       return;
@@ -92,7 +102,12 @@ export const update = async (ctx: Ctx) => {
 export const cancel = async (ctx: Ctx) => {
   try {
     const { oid } = ctx.params;
-    const { user } = ctx.request.body || {};
+    const { user: userInfo } = ctx.request.body || {};
+    const user = await User.findOne(userInfo);
+    if (!user) {
+      ResponseWrap.fail(ctx, '无效用户');
+    }
+
     const orders = await Order.findByIds([oid]);
     if (!orders.length) {
       ResponseWrap.fail(ctx, '无订单');

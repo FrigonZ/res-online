@@ -14,14 +14,14 @@ export const login = async (ctx: Ctx) => {
       return;
     }
 
-    const result = await Admin.insert({ aid, password });
-    if (!result.identifiers.length) {
+    const result = await Admin.find({ aid, password });
+    if (!result.length) {
       ResponseWrap.fail(ctx);
       return;
     }
 
     const token = sign({ aid });
-    ResponseWrap.success(ctx, token);
+    ResponseWrap.success(ctx, { token });
   } catch (error) {
     logError(`${KEY}.login`, error, ctx.request.body || {});
     ResponseWrap.error(ctx);
@@ -43,24 +43,18 @@ export const sudo = async (ctx: Ctx, next: Next) => {
       return;
     }
 
-    const admin = await Admin.findOne({ aid });
-    if (!admin) {
-      ResponseWrap.authFail(ctx);
-      return;
-    }
-
     if (ctx.request.body) {
       ctx.request.body = {
         ...ctx.request.body,
-        admin,
+        aid,
       };
     } else {
       ctx.request.body = {
-        admin,
+        aid,
       };
     }
 
-    next();
+    await next();
   } catch (error) {
     logError(`${KEY}.admin`, error, ctx.request.header);
     ResponseWrap.error(ctx);
