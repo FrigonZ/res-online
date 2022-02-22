@@ -72,24 +72,18 @@ export const auth = async (ctx: Ctx, next: Next) => {
       return;
     }
 
-    const userEntity = await User.findOne(user);
-    if (!userEntity) {
-      ResponseWrap.authFail(ctx);
-      return;
-    }
-
     if (ctx.request.body) {
       ctx.request.body = {
         ...ctx.request.body,
-        user: userEntity,
+        user,
       };
     } else {
       ctx.request.body = {
-        user: userEntity,
+        user,
       };
     }
 
-    next();
+    await next();
   } catch (error) {
     logError(`${KEY}.auth`, error, ctx.request.header);
     ResponseWrap.error(ctx);
