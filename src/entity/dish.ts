@@ -2,19 +2,19 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
 import { DishOption, DishStatus } from '../constant';
 
 export interface DishProps {
-	/** 餐品名 */
+  /** 餐品名 */
   name: string;
-	/** 餐品价格 */
+  /** 餐品价格 */
   price: number;
-	/** 餐品图片 */
+  /** 餐品图片 */
   pic?: string;
-	/** 餐品描述 */
+  /** 餐品描述 */
   desc?: string;
-	/** 餐品自定义 */
+  /** 餐品自定义 */
   options?: DishOption[];
-	/** 是否为必选品 */
+  /** 是否为必选品 */
   isNecessary?: boolean;
-	/** 餐品状态 */
+  /** 餐品状态 */
   status?: DishStatus;
 }
 
@@ -27,7 +27,7 @@ export class Dish extends BaseEntity {
   @Column()
   name: string;
 
-  @Column({type: 'double'})
+  @Column({ type: 'double' })
   price: number;
 
   @Column()
@@ -37,7 +37,7 @@ export class Dish extends BaseEntity {
   desc: string;
 
   @Column({
-    type: 'simple-json'
+    type: 'simple-json',
   })
   options: DishOption[];
 
@@ -50,7 +50,7 @@ export class Dish extends BaseEntity {
   @Column()
   time: Date;
 
-	/** 生成餐品信息，避免override构造器影响orm */
+  /** 生成餐品信息，避免override构造器影响orm */
   public static generateDish(props: DishProps): Dish {
     const {
       name,
@@ -79,5 +79,5 @@ export class Dish extends BaseEntity {
       ...props,
       time: new Date(),
     };
-  }
+  };
 }
