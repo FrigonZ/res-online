@@ -56,7 +56,29 @@ export const sudo = async (ctx: Ctx, next: Next) => {
 
     await next();
   } catch (error) {
-    logError(`${KEY}.admin`, error, ctx.request.header);
+    logError(`${KEY}.sudo`, error, ctx.request.header);
+    ResponseWrap.error(ctx);
+  }
+};
+
+export const checkToken = (ctx: Ctx) => {
+  try {
+    const { header } = ctx.request;
+    const { authorization = '' } = header;
+    if (!authorization) {
+      ResponseWrap.fail(ctx);
+      return;
+    }
+
+    const { aid } = verify(authorization);
+    if (!aid) {
+      ResponseWrap.fail(ctx);
+      return;
+    }
+
+    ResponseWrap.success(ctx, {});
+  } catch (error) {
+    logError(`${KEY}.checkToken`, error, ctx.request.header);
     ResponseWrap.error(ctx);
   }
 };
