@@ -1,6 +1,6 @@
 import { isArray } from 'util';
 import { Ctx } from '../constant';
-import { doUpload, getObjectUrl } from '../cos/cos';
+import { doUpload, getObjectUrl } from '../utils/cos';
 import { generateFileKey } from '../utils/file';
 import { ResponseWrap } from '../utils/response';
 
