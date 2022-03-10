@@ -10,7 +10,7 @@ export class Logs extends BaseEntity {
   type: LogType;
 
   @Column()
-  time: string;
+  time: Date;
 
   @Column()
   msg: string;

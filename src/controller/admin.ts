@@ -80,7 +80,7 @@ export const checkToken = (ctx: Ctx) => {
 
     ResponseWrap.success(ctx, {});
   } catch (error) {
-    logError(`${KEY}.checkToken`, error, ctx.request.header);
+    logError(`${KEY}.checkToken`, error, ctx.request.header.authorization);
     ResponseWrap.error(ctx);
   }
 };
