@@ -26,7 +26,7 @@ export interface LogInfo {
   /** 日志类型 */
   type: LogType;
   /** 日志时间 */
-  time: string;
+  time: Date;
   /** 日志信息 */
   msg: string;
   /** 日志key */

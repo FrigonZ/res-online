@@ -12,7 +12,11 @@ export const sign = (payload: any) =>
 
 /** 解密 */
 export const verify = (token: string) => {
-  const decode = jwt.verify(token, jwtSecret);
-  if (typeof decode === 'string') return {};
-  return decode;
+  try {
+    const decode = jwt.verify(token, jwtSecret);
+    if (typeof decode === 'string') return {};
+    return decode;
+  } catch (error) {
+    return {};
+  }
 };

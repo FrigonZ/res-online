@@ -32,7 +32,7 @@ export const doLog = (msg: string, type = LogType.LOG, key = '') => {
     key,
     type,
     msg,
-    time: new Date().toLocaleTimeString(),
+    time: new Date(),
   });
 };
 
@@ -69,7 +69,26 @@ export const write = async () => {
   try {
     if (!logInfos.length) return;
     console.log(logInfos);
-    const result = await Logs.insert(logInfos);
+    let overflow = 0;
+    const target = logInfos.map((logInfo) => {
+      if (logInfo.msg.length > 254) {
+        if (logInfo.msg.length > overflow) overflow = logInfo.msg.length;
+        return {
+          ...logInfo,
+          msg: logInfo.msg.substring(0, 254),
+        };
+      }
+      return logInfo;
+    });
+    if (overflow) {
+      logInfos.push({
+        key: 'msg.overflow',
+        msg: overflow as any,
+        type: LogType.INFO,
+        time: new Date(),
+      });
+    }
+    const result = await Logs.insert(target);
     if (result.identifiers.length) {
       resetLogInfos();
     }
