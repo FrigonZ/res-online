@@ -9,6 +9,8 @@ export const cos = new Cos({
   SecretKey: cosKey,
 });
 
+const extension = '.webp';
+
 export const doUpload = (source: string | Buffer, key: string) => {
   let img: any;
   if (Buffer.isBuffer(source)) {
@@ -25,6 +27,9 @@ export const doUpload = (source: string | Buffer, key: string) => {
         Region: region,
         Key: key,
         StorageClass: 'STANDARD',
+        Headers: {
+          'Pic-Operations': `{"is_pic_info": 1,"rules": [{"fileid": "${key}.webp","rule": "imageMogr2/format/webp"}]}`,
+        },
         Body: img,
       },
       (err, data) => {
@@ -41,5 +46,5 @@ export const doUpload = (source: string | Buffer, key: string) => {
 };
 
 export const getObjectUrl = (key: string) => {
-  return cosBase + key;
+  return cosBase + key + extension;
 };
