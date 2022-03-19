@@ -63,7 +63,7 @@ export class SocketItem {
   /** 心跳停跳事件，无响应等待1分钟后断开连接 */
   private heartBeatReaction = () => {
     doLog(`${this.key} maybe dead`);
-    this.handleSend();
+    // this.handleSend();
     this.heartBeat = setTimeout(() => this.socket.terminate(), HEART_BEAT_STEP);
   };
 
