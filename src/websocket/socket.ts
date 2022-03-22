@@ -7,6 +7,7 @@ import {
   WebSocketUniq,
 } from '../constant';
 import { doLog } from '../utils/logger';
+import { verify } from '../utils/jwt';
 import { generateWebsocketUniq } from './helper';
 
 /** 存储所有socket连接 */
@@ -71,7 +72,13 @@ export class SocketItem {
   private handleReceive = (data: string) => {
     try {
       const parsedData: WebSocketRequest = JSON.parse(data);
-      const { data: orders = [] } = parsedData;
+      const { data: orders = [], authorization = '' } = parsedData;
+      const { aid } = verify(authorization);
+      if (!aid) {
+        this.sendAuthFail();
+        this.socket.terminate();
+        return;
+      }
       this.resetHeartBeat();
       orders.forEach(async (order) => {
         await this.handleOrderActions(order);
@@ -206,6 +213,19 @@ export class SocketItem {
       ],
     };
     this.socket.send(JSON.stringify(heartBeatData));
+  };
+
+  private sendAuthFail = () => {
+    const authFailData: WebSocketResponse = {
+      data: [
+        {
+          action: OrderAction.AUTH_FAIL,
+          options: {},
+          id: '',
+        },
+      ],
+    };
+    this.socket.send(JSON.stringify(authFailData));
   };
 }
 

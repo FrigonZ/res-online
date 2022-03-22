@@ -45,6 +45,8 @@ export const enum OrderAction {
   HEART_BEAT,
   /** 终止连接 */
   FINISH,
+  /** 鉴权失败 */
+  AUTH_FAIL,
 }
 
 /** 订单状态 */
