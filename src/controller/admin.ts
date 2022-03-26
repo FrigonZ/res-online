@@ -87,7 +87,7 @@ export const checkToken = (ctx: Ctx) => {
 
 export const getCode = async (ctx: Ctx) => {
   try {
-    const { path, env } = ctx.query;
+    const { path, env } = ctx.request.body;
     if (!path || !env) {
       ResponseWrap.fail(ctx, '缺少参数');
       return;
@@ -97,14 +97,14 @@ export const getCode = async (ctx: Ctx) => {
       ResponseWrap.fail(ctx, '获取失败');
       return;
     }
-    const key = `code-${path}-${env}.jpg`;
+    const key = encodeURIComponent(`code-${path}-${env}.jpg`);
     const resData = await doUpload(data, key);
     if (!resData) {
       ResponseWrap.fail(ctx, '二维码上传失败');
       return;
     }
 
-    ResponseWrap.success(ctx, { url: getObjectUrl(key) });
+    ResponseWrap.success(ctx, { url: getObjectUrl(encodeURIComponent(key)) });
   } catch (error) {
     logError(`${KEY}.getCode`, error, ctx.params);
   }
