@@ -19,11 +19,11 @@ export const upload = async (ctx: Ctx) => {
     ResponseWrap.fail(ctx, '文件异常');
     return;
   }
-  const key = generateFileKey(name);
+  const key = encodeURIComponent(generateFileKey(name));
   const data = await doUpload(path, key);
   if (!data) {
     ResponseWrap.fail(ctx, '请求失败');
     return;
   }
-  ResponseWrap.success(ctx, { url: getObjectUrl(key) });
+  ResponseWrap.success(ctx, { url: getObjectUrl(encodeURIComponent(key)) });
 };

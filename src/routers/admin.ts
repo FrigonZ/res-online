@@ -7,6 +7,6 @@ router.post('/admin', login);
 
 router.get('/admin', checkToken);
 
-router.get('/wxacode', sudo, getCode);
+router.post('/wxacode', getCode);
 
 export default router;
