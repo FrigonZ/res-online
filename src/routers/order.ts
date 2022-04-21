@@ -18,7 +18,7 @@ router.get('/list', auth, getByUser);
 
 router.get('/:oid', getById);
 
-router.post('/', sudo, create);
+router.post('/', auth, create);
 
 router.put('/', sudo, update);
 

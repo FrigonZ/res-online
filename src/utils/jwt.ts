@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { jwtSecret } from '../constant/config';
 
 /** jwt有效时间 */
-const expiresIn = '1h';
+const expiresIn = '24h';
 
 /** 加密 */
 export const sign = (payload: any) =>

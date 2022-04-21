@@ -16,6 +16,8 @@ export interface DishProps {
   isNecessary?: boolean;
   /** 餐品状态 */
   status?: DishStatus;
+  /** 分组 */
+  group?: number;
 }
 
 /** 餐品 */
@@ -50,6 +52,9 @@ export class Dish extends BaseEntity {
   @Column()
   time: Date;
 
+  @Column()
+  group: number;
+
   /** 生成餐品信息，避免override构造器影响orm */
   public static generateDish(props: DishProps): Dish {
     const {
@@ -60,6 +65,7 @@ export class Dish extends BaseEntity {
       options = [],
       isNecessary = false,
       status = DishStatus.NORMAL,
+      group = -1,
     } = props;
     const dish = new Dish();
     dish.name = name;
@@ -70,6 +76,7 @@ export class Dish extends BaseEntity {
     dish.isNecessary = isNecessary;
     dish.status = status;
     dish.time = new Date();
+    dish.group = group;
     return dish;
   }
 
