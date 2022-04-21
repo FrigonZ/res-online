@@ -34,6 +34,9 @@ export class Order extends BaseEntity {
   @Column()
   uid: number;
 
+  @Column()
+  price: number;
+
   @ManyToOne(() => User, (user) => user.orders)
   @JoinColumn({ name: 'uid' })
   user: User;

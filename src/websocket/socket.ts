@@ -234,3 +234,7 @@ export const doBroadcast = (data: WebSocketUniq) => {
     socket.addWaitData(data, true);
   });
 };
+
+export const checkBusi = () => {
+  return socketList.length !== 0;
+};

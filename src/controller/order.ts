@@ -1,8 +1,10 @@
 import { Ctx, OrderStatus } from '../constant';
+import { Dish } from '../entity/dish';
 import { Order } from '../entity/order';
 import { User } from '../entity/user';
 import { ODProps, OrderDish } from '../relation/order-dish';
 import { ResponseWrap } from '../utils/response';
+import { checkBusi } from '../websocket';
 
 const PAGE = 10;
 
@@ -50,10 +52,15 @@ export const getById = async (ctx: Ctx) => {
 
 export const create = async (ctx: Ctx) => {
   try {
+    if (!checkBusi()) {
+      ResponseWrap.fail(ctx, '店铺休息中');
+      return;
+    }
     const { order, dishes, user: userInfo } = ctx.request.body || {};
     const user = await User.findOne(userInfo);
     if (!user) {
       ResponseWrap.fail(ctx, '无效用户');
+      return;
     }
 
     if (!order) {
@@ -61,10 +68,18 @@ export const create = async (ctx: Ctx) => {
       return;
     }
     const target = Order.generateOrder(order);
-    target.dishes = (dishes as ODProps[]).map((dish) =>
-      OrderDish.generateOrderDish(dish)
+    let price = 0;
+    target.dishes = (dishes as ODProps[]).map((dish) => {
+      return OrderDish.generateOrderDish(dish);
+    });
+    const dishData = await Dish.findByIds(
+      target.dishes.map((orderDish) => orderDish.dish.did)
     );
+    dishData.forEach((dish) => {
+      price += dish.price;
+    });
     target.user = user;
+    target.price = price;
     const result = await target.save();
     if (!result) {
       ResponseWrap.fail(ctx, '提交订单失败');
