@@ -9,6 +9,7 @@ import {
 import { doLog } from '../utils/logger';
 import { verify } from '../utils/jwt';
 import { generateWebsocketUniq } from './helper';
+import { Order } from '../entity/order';
 
 /** 存储所有socket连接 */
 export const socketList: SocketItem[] = [];
@@ -233,6 +234,11 @@ export const doBroadcast = (data: WebSocketUniq) => {
   socketList.forEach((socket) => {
     socket.addWaitData(data, true);
   });
+};
+
+export const broadcastOrder = (orders: Order[]) => {
+  const uniq = generateWebsocketUniq(OrderAction.SET, {}, { orders });
+  doBroadcast(uniq);
 };
 
 export const checkBusi = () => {
