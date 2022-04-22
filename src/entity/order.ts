@@ -6,16 +6,19 @@ import {
   BaseEntity,
   ManyToOne,
   JoinColumn,
-  OneToMany,
 } from 'typeorm';
-import { OrderStatus } from '../constant';
-import { OrderDish } from '../relation/order-dish';
+import { OrderDish, OrderStatus } from '../constant';
 import { User } from './user';
 
 export interface OrderProps {
   status: OrderStatus;
   seat: string;
 }
+
+const formatTime = (date: Date): string =>
+  `${date.getFullYear()}-${
+    date.getMonth() + 1
+  }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
 
 @Entity()
 export class Order extends BaseEntity {
@@ -41,8 +44,12 @@ export class Order extends BaseEntity {
   @JoinColumn({ name: 'uid' })
   user: User;
 
-  @OneToMany(() => OrderDish, (orderDish) => orderDish.order)
+  @Column({
+    type: 'simple-json',
+  })
   dishes: OrderDish[];
+
+  formatDate: string;
 
   public static generateOrder = (props: OrderProps) => {
     const order = new Order();
@@ -51,5 +58,9 @@ export class Order extends BaseEntity {
     order.time = new Date();
     order.seat = seat;
     return order;
+  };
+
+  public format = () => {
+    this.formatDate = formatTime(this.time);
   };
 }

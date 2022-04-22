@@ -1,10 +1,9 @@
-import { Ctx, OrderStatus } from '../constant';
+import { Ctx, OrderDish, OrderStatus } from '../constant';
 import { Dish } from '../entity/dish';
 import { Order } from '../entity/order';
 import { User } from '../entity/user';
-import { ODProps, OrderDish } from '../relation/order-dish';
 import { ResponseWrap } from '../utils/response';
-import { checkBusi } from '../websocket';
+import { broadcastOrder, checkBusi } from '../websocket';
 
 const PAGE = 10;
 
@@ -15,6 +14,7 @@ export const getAll = async (ctx: Ctx) => {
       skip: (Number(page) - 1) * PAGE,
       take: PAGE,
     });
+    orders.forEach((order) => order.format());
     ResponseWrap.success(ctx, { orders });
   } catch (error) {
     ResponseWrap.error(ctx);
@@ -69,11 +69,9 @@ export const create = async (ctx: Ctx) => {
     }
     const target = Order.generateOrder(order);
     let price = 0;
-    target.dishes = (dishes as ODProps[]).map((dish) => {
-      return OrderDish.generateOrderDish(dish);
-    });
+    target.dishes = dishes;
     const dishData = await Dish.findByIds(
-      target.dishes.map((orderDish) => orderDish.dish.did)
+      dishes.map((orderDish: OrderDish) => orderDish.did)
     );
     dishData.forEach((dish) => {
       price += dish.price;
@@ -85,6 +83,8 @@ export const create = async (ctx: Ctx) => {
       ResponseWrap.fail(ctx, '提交订单失败');
       return;
     }
+    target.format();
+    broadcastOrder([result]);
     ResponseWrap.success(ctx, { order: result });
   } catch (error) {
     ResponseWrap.error(ctx);
