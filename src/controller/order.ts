@@ -1,4 +1,4 @@
-import { Ctx, OrderDish, OrderStatus } from '../constant';
+import { Ctx, DishOption, OrderDish, OrderStatus } from '../constant';
 import { Dish } from '../entity/dish';
 import { Order } from '../entity/order';
 import { User } from '../entity/user';
@@ -9,7 +9,13 @@ const PAGE = 10;
 
 export const getAll = async (ctx: Ctx) => {
   try {
-    const { page = 1 } = ctx.params;
+    const { page } = ctx.params;
+    if (!page) {
+      const orders = await Order.find();
+      orders.forEach((order) => order.format());
+      ResponseWrap.success(ctx, { orders });
+      return;
+    }
     const orders = await Order.find({
       skip: (Number(page) - 1) * PAGE,
       take: PAGE,
@@ -28,8 +34,9 @@ export const getByUser = async (ctx: Ctx) => {
     if (!user) {
       ResponseWrap.fail(ctx, '无效用户');
     }
+    const { uid } = user;
 
-    const { orders } = user as User;
+    const orders = await Order.find({ uid });
     ResponseWrap.success(ctx, { orders });
   } catch (error) {
     ResponseWrap.error(ctx);
@@ -70,11 +77,20 @@ export const create = async (ctx: Ctx) => {
     const target = Order.generateOrder(order);
     let price = 0;
     target.dishes = dishes;
-    const dishData = await Dish.findByIds(
-      dishes.map((orderDish: OrderDish) => orderDish.did)
-    );
-    dishData.forEach((dish) => {
+    const dids: number[] = dishes.map((orderDish: OrderDish) => orderDish.did);
+    const dishData = await Dish.findByIds(dids);
+    dishes.forEach((od: OrderDish) => {
+      const { did, option: options } = od;
+      const dish = dishData.find((d) => d.did === did);
+      if (!dish) return;
       price += dish.price;
+      if (options.length) {
+        const dbOptions = dish.options;
+        options.forEach((option: DishOption, index) => {
+          const key = Object.keys(option.content)[0];
+          price += dbOptions[index].content[key];
+        });
+      }
     });
     target.user = user;
     target.price = price;
@@ -146,6 +162,7 @@ export const cancel = async (ctx: Ctx) => {
       return;
     }
 
+    broadcastOrder([result], true);
     ResponseWrap.success(ctx, {});
   } catch (error) {
     ResponseWrap.error(ctx);

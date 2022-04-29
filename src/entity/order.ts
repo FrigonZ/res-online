@@ -37,7 +37,7 @@ export class Order extends BaseEntity {
   @Column()
   uid: number;
 
-  @Column()
+  @Column({ type: 'double' })
   price: number;
 
   @ManyToOne(() => User, (user) => user.orders)

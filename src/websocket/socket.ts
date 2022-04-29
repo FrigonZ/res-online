@@ -2,6 +2,7 @@ import Websocket = require('ws');
 import {
   LogType,
   OrderAction,
+  OrderStatus,
   WebSocketRequest,
   WebSocketResponse,
   WebSocketUniq,
@@ -236,8 +237,14 @@ export const doBroadcast = (data: WebSocketUniq) => {
   });
 };
 
-export const broadcastOrder = (orders: Order[]) => {
-  const uniq = generateWebsocketUniq(OrderAction.SET, {}, { orders });
+export const broadcastOrder = (orders: Order[], isCancel = false) => {
+  const uniq = generateWebsocketUniq(
+    OrderAction.SET,
+    {
+      status: isCancel ? OrderStatus.CANCELED : OrderStatus.ON_PROCESS,
+    },
+    { orders }
+  );
   doBroadcast(uniq);
 };
 
