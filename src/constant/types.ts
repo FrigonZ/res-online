@@ -74,9 +74,7 @@ export interface DishOption {
   /** 分组名 */
   group?: string;
   /** 选项名 */
-  names: string[];
-  /** 选项价格 */
-  prices: number[];
+  content: Record<string, number>;
   /** 是否多选 */
   isMulti: boolean;
 }
@@ -86,5 +84,5 @@ export interface OrderDish {
   /** 餐品id */
   did: number;
   /** 餐品自定义 */
-  option: DishOption;
+  option: DishOption[];
 }
