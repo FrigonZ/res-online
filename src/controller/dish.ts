@@ -27,7 +27,6 @@ export const update = async (ctx: Ctx) => {
     }
 
     const { did } = dish;
-    console.log(dish);
     const result: UpdateResult = await Dish.update(
       did,
       Dish.getPortail(dish) as any

@@ -9,6 +9,7 @@ import admin from './admin';
 import cos from './cos';
 import group from './group';
 import order from './order';
+import discount from './discount';
 
 const routers: Router[] = [
   fs,
@@ -20,6 +21,7 @@ const routers: Router[] = [
   cos,
   group,
   order,
+  discount,
 ];
 
 const baseRouter = new Router({ prefix: '/api' });

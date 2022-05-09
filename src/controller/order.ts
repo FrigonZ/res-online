@@ -2,6 +2,7 @@ import { Ctx, DishOption, OrderDish, OrderStatus } from '../constant';
 import { Dish } from '../entity/dish';
 import { Order } from '../entity/order';
 import { User } from '../entity/user';
+import { calcDiscount } from '../utils/discount';
 import { ResponseWrap } from '../utils/response';
 import { broadcastOrder, checkBusi } from '../websocket';
 
@@ -92,8 +93,10 @@ export const create = async (ctx: Ctx) => {
         });
       }
     });
+    const discount = calcDiscount(price);
     target.user = user;
-    target.price = price;
+    target.price = price - discount;
+    target.discount = discount;
     const result = await target.save();
     if (!result) {
       ResponseWrap.fail(ctx, '提交订单失败');

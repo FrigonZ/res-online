@@ -7,6 +7,7 @@ import initialRoute from './routers';
 import initialMiddleware from './middleware';
 import { doLog, removeLogTimer, setLogTimer } from './utils/logger';
 import { initWsServer } from './websocket';
+import { initDiscounts } from './utils/discount';
 
 // 服务监听端口
 const PORT = 8080;
@@ -14,7 +15,7 @@ const PORT = 8080;
 const app = new Koa();
 const server = http.createServer(app.callback());
 
-createConnection();
+createConnection().then(initDiscounts);
 initWsServer(server);
 
 initialMiddleware(app);
